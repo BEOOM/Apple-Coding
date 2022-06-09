@@ -16,7 +16,11 @@ import {
   Outlet,
 } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
+//laxy(() => import (경로))
+//suspense
+//useMemo -> 실행시점의차이
+//batch
+//useTrnasition
 let B = styled.button`
   background: ${(props) => props.bg};
   color: ${(props) => (props.bg == "blue" ? "white" : "yellow")};
@@ -35,6 +39,21 @@ function App() {
   let [shoes, setShoes] = useState(data);
   let navigate = useNavigate();
   let [count, setCount] = useState(0);
+  // axios.get("https://codingapple1.github.io/userdata.json");.then((a)=>a.data)
+  let resultt = useQuery("Ho", () => {
+    return axios
+      .get("https://codingapple1.github.io/userdata.json")
+      .then((a) => {
+        console.log("요청됨");
+        return a.data;
+      });
+    // {
+    //   staleTime: 2000;
+    // }
+  });
+  // resultt.data;
+  // resultt.isLoading;
+  // resultt.error;
 
   return (
     <>
@@ -70,6 +89,11 @@ function App() {
             >
               Cart
             </Nav.Link>
+          </Nav>
+          <Nav className="me-auto">
+            {resultt.isLoading && "로딩중"}
+            {resultt.error && "에러남"}
+            {resultt.data && resultt.data.name}
           </Nav>
         </Container>
       </Navbar>
@@ -112,7 +136,7 @@ function App() {
                           let copy3 = [...shoes, ...result.data];
                           setShoes(copy3);
                         })
-                        .cathc(() => {
+                        .catch(() => {
                           console.log("실패");
                         });
                     } else if (count >= 2) {
