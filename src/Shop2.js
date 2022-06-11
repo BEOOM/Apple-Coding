@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Nav, Navbar, Container } from "react-bootstrap";
 import "./Shop2.css";
 import data from "./data";
@@ -6,11 +6,27 @@ import { Link, Route, Switch, Routes } from "react-router-dom";
 import Detail from "./Detail";
 import axios from "axios";
 
+export let Range = React.createContext();
+
 export default function Shop2() {
+  let [stock, setStock] = useState([10, 11, 12]);
   let [shoes, setShoes] = useState(data);
+  let [count, setCount] = useState(1);
+  const add = () => {
+    setCount(count + 1);
+  };
+
+  const minus = () => {
+    if (count > 1) {
+      setCount(count - 1);
+    } else if ((count = 1)) alert("첫 페이지입니다");
+  };
+
   return (
     <>
       <div>
+        <button onClick={add}>더하기{count}</button>
+        <button onClick={minus}>빼기{count}</button>
         <Navbar bg="primary" variant="dark">
           <Container>
             <Navbar.Brand href="#home">Navbar</Navbar.Brand>
@@ -27,11 +43,15 @@ export default function Shop2() {
         </Navbar>
       </div>
       <Routes>
-        <Route exact path="/" element={<Main shoes={shoes} />} />
+        <Route
+          exact
+          path="/"
+          element={<Main shoes={shoes} setShoes={setShoes} stock={stock} />}
+        />
         <Route
           exact
           path="/detail/:id"
-          element={<Detail shoes={shoes} setShoes={setShoes} />}
+          element={<Detail shoes={shoes} stock={stock} setStock={setStock} />}
         />
       </Routes>
 
@@ -62,18 +82,23 @@ export default function Shop2() {
   );
 }
 
-function Main({ shoes }, setShoes) {
+function Main({ shoes, setShoes, stock }) {
+  const [load, setLoad] = useState(false);
+  const [count, setCount] = useState(2);
   return (
     <>
       <div className="background">
         <h1>20% Season Off</h1>
       </div>
       <div className="container">
-        <div className="row">
-          {shoes.map((a, i) => {
-            return <Item shoes={shoes[i]} i={i} key={i} />;
-          })}
-        </div>
+        <Range.Provider value={stock}>
+          <div className="row">
+            {shoes.map((a, i) => {
+              return <Item shoes={shoes[i]} i={i} key={i} />;
+            })}
+          </div>
+        </Range.Provider>
+        {load && <div>로딩중</div>}
         {/* <div className="row">
           {shoes.map((shoe) => {
             return <List shoe={shoe} />;
@@ -82,15 +107,22 @@ function Main({ shoes }, setShoes) {
         <button
           className="btn btn-primary"
           onClick={() => {
-            axios
-              .get("https://codingapple1.github.io/shop/data2.json")
-              .then((res) => {
-                let copy = [...shoes, ...res.data];
-                setShoes(copy);
-              })
-              .catch(() => {
-                console.log("실패");
-              });
+            if (count <= 3) {
+              setLoad(true);
+              axios
+                .get(`https://codingapple1.github.io/shop/data${count}.json`)
+                .then((res) => {
+                  let copy = [...shoes, ...res.data];
+                  setShoes(copy);
+                  setLoad(false);
+                })
+                .catch(() => {
+                  console.log("실패");
+                });
+              setCount(count + 1);
+            } else {
+              alert("더이상 상품이 없습니다");
+            }
           }}
         >
           더보기
@@ -101,6 +133,7 @@ function Main({ shoes }, setShoes) {
 }
 
 function Item(props) {
+  let stock = useContext(Range);
   return (
     <div className="col-md-4">
       <img
@@ -114,6 +147,7 @@ function Item(props) {
       <p>
         {props.shoes.content} & {props.shoes.price}
       </p>
+      {stock[props.i]}
     </div>
   );
 }

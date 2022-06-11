@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-
+import { Range } from "./Shop2";
 // import { useHistory } from "react-router-dom";
 
 export default function Detail(props) {
   // let history = useHistory();
   let [active, setActive] = useState(true);
-  useEffect(() => {
+  let stock = useContext(Range);
+  let c = useEffect(() => {
     setTimeout(() => {
       setActive(false);
     }, 2000);
+    return () => clearTimeout(c);
   }, []);
 
   let { id } = useParams();
@@ -33,10 +35,24 @@ export default function Detail(props) {
             <h4 className="pt-5">{found.title}</h4>
             <p>{found.content}</p>
             <p>{found.price}</p>
-            <button className="btn btn-danger">주문하기</button>
+            <Left stock={props.stock} />
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                {
+                  props.setStock([9, 10, 11]);
+                }
+              }}
+            >
+              주문하기
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+function Left(props) {
+  return <p>재고 : {props.stock[0]} </p>;
 }
