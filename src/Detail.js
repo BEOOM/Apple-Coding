@@ -20,6 +20,20 @@ export default function Detail(props) {
     return itemn.id == id;
   });
 
+  useEffect(() => {
+    let arr = localStorage.getItem("watched");
+    if (arr == null) {
+      arr = [];
+    } else {
+      arr = JSON.parse(arr);
+    }
+    arr.push(id);
+    arr = new Set(arr);
+    arr = [...arr];
+
+    localStorage.setItem("watched", JSON.stringify(arr));
+  }, []);
+
   return (
     <div>
       {active && <div>재고가 얼마 남지 않았습니다</div>}
