@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, lazy, Suspense } from "react";
 import { Nav, Navbar, Container } from "react-bootstrap";
 import "./Shop2.css";
 import data from "./data";
@@ -6,6 +6,9 @@ import { Link, Route, Switch, Routes } from "react-router-dom";
 import Detail from "./Detail";
 import axios from "axios";
 import Cart2 from "./Cart2";
+// let Detail = lazy(() => {
+//   import("./Detail");
+// });
 
 export let Range = React.createContext();
 
