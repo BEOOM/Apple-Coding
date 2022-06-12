@@ -5,6 +5,7 @@ import data from "./data";
 import { Link, Route, Switch, Routes } from "react-router-dom";
 import Detail from "./Detail";
 import axios from "axios";
+import Cart2 from "./Cart2";
 
 export let Range = React.createContext();
 
@@ -37,7 +38,9 @@ export default function Shop2() {
               <Nav.Link as={Link} to="/detail">
                 Detail
               </Nav.Link>
-              <Nav.Link>Pricing</Nav.Link>
+              <Nav.Link as={Link} to="/cart">
+                Cart
+              </Nav.Link>
             </Nav>
           </Container>
         </Navbar>
@@ -53,31 +56,8 @@ export default function Shop2() {
           path="/detail/:id"
           element={<Detail shoes={shoes} stock={stock} setStock={setStock} />}
         />
+        <Route path="/cart" element={<Cart2 />} />
       </Routes>
-
-      {/* <Routes>
-        <Route exact path="/"></Route>
-        <Route path="/detail">
-          <>
-            <div className="container">
-              <div className="row">
-                <div className="col-md-6">
-                  <img
-                    src="https://codingapple1.github.io/shop/shoes1.jpg"
-                    width="100%"
-                  />
-                </div>
-                <div className="col-md-6 mt-4">
-                  <h4 className="pt-5">상품명</h4>
-                  <p>상품설명</p>
-                  <p>120000원</p>
-                  <button className="btn btn-danger">주문하기</button>
-                </div>
-              </div>
-            </div>
-          </>
-        </Route>
-      </Routes> */}
     </>
   );
 }
